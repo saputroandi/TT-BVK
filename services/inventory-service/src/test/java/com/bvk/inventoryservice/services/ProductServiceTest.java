@@ -2,7 +2,9 @@ package com.bvk.inventoryservice.services;
 
 import com.bvk.inventoryservice.dto.ProductRequest;
 import com.bvk.inventoryservice.dto.ProductResponse;
+import com.bvk.inventoryservice.dto.PurchasedProductRequest;
 import com.bvk.inventoryservice.eitities.Product;
+import com.bvk.inventoryservice.exceptions.ProductPurchaseException;
 import com.bvk.inventoryservice.repositories.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -117,6 +122,52 @@ class ProductServiceTest {
 
         verify(productRepository, times(1)).existsById(productId);
         verify(productRepository, times(0)).deleteById(productId);
+    }
+
+    @Test
+    public void purchaseProduct_success() {
+        PurchasedProductRequest request1 = new PurchasedProductRequest(1L, 2L);
+        PurchasedProductRequest request2 = new PurchasedProductRequest(2L, 3L);
+        List<PurchasedProductRequest> requestList = new ArrayList<>();
+        requestList.add(request1);
+        requestList.add(request2);
+
+        Product product1 = new Product(1L, "Product 1", new BigDecimal("10.00"), 5L);
+        Product product2 = new Product(2L, "Product 2", new BigDecimal("20.00"), 5L);
+        List<Product> storedProducts = new ArrayList<>();
+        storedProducts.add(product1);
+        storedProducts.add(product2);
+
+        when(productRepository.findAllById(anyList())).thenReturn(storedProducts);
+        when(productRepository.saveAll(anyList())).thenReturn(storedProducts);
+
+        List<ProductResponse> response = productService.purchaseProduct(requestList);
+
+        assertEquals(2, response.size());
+        assertEquals(3L, product1.getQuantity());
+        assertEquals(2L, product2.getQuantity());
+
+        verify(productRepository, times(1)).findAllById(anyList());
+        verify(productRepository, times(1)).saveAll(anyList());
+    }
+
+    @Test
+    public void testPurchaseProduct_productNotFound() {
+        PurchasedProductRequest request1 = new PurchasedProductRequest(1L, 2L);
+        List<PurchasedProductRequest> requestList = new ArrayList<>();
+        requestList.add(request1);
+
+        when(productRepository.findAllById(anyList())).thenReturn(new ArrayList<>());
+
+        Exception exception = assertThrows(ProductPurchaseException.class, () -> {
+            productService.purchaseProduct(requestList);
+        });
+
+        String expectedMessage = "One or more products does not exist";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+        verify(productRepository, times(1)).findAllById(anyList());
     }
 
     private ProductRequest createProductRequest(){
