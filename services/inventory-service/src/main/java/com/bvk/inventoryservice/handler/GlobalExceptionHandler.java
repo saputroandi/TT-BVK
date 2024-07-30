@@ -1,5 +1,6 @@
 package com.bvk.inventoryservice.handler;
 
+import com.bvk.inventoryservice.exceptions.ProductPurchaseException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler( EntityNotFoundException.class)
     public ResponseEntity<String> handle(EntityNotFoundException exp) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exp.getMessage());
+    }
+
+    @ExceptionHandler( ProductPurchaseException.class)
+    public ResponseEntity<String> handle(ProductPurchaseException exp) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exp.getMessage());

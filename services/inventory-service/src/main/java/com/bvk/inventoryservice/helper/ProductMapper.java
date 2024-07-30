@@ -15,6 +15,15 @@ public class ProductMapper {
                 .build();
     }
 
+    public static ProductResponse toProductResponse(Product product, Long quantity){
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .quantity(quantity)
+                .build();
+    }
+
     public static Product toProduct(ProductRequest request){
         return Product.builder()
                 .name(request.getName())
