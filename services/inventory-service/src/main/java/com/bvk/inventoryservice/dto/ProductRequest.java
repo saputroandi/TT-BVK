@@ -15,10 +15,10 @@ public class ProductRequest {
     private String name;
 
     @NotNull
-    @DecimalMin(value = "0.0")
+    @DecimalMin( value = "0.0" )
     private BigDecimal price;
 
     @NotNull
-    @Min(value = 0)
+    @Min( value = 0 )
     private Long quantity;
 }

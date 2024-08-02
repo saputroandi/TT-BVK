@@ -16,14 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith( MockitoExtension.class)
+@ExtendWith( MockitoExtension.class )
 class ProductServiceTest {
 
     @Mock
@@ -34,6 +33,7 @@ class ProductServiceTest {
 
     @Test
     void getListProduct() {
+
         productService.getListProduct();
 
         verify(productRepository).findAll();
@@ -41,6 +41,7 @@ class ProductServiceTest {
 
     @Test
     void createProduct() {
+
         ProductRequest request = createProductRequest();
         Product savedProduct = createProduct(1L);
 
@@ -63,6 +64,7 @@ class ProductServiceTest {
 
     @Test
     void updateProduct() {
+
         Long id = 1L;
         ProductRequest request = createProductRequest();
         Product product = createProduct(id);
@@ -84,6 +86,7 @@ class ProductServiceTest {
 
     @Test
     public void updateProduct_EntityNotFound() {
+
         Long id = 2L;
         ProductRequest request = createProductRequest();
 
@@ -99,6 +102,7 @@ class ProductServiceTest {
 
     @Test
     void removeProduct() {
+
         Long id = 1L;
         when(productRepository.existsById(id)).thenReturn(true);
 
@@ -110,6 +114,7 @@ class ProductServiceTest {
 
     @Test
     public void removeProduct_EntityNotFound() {
+
         Long productId = 1L;
 
         when(productRepository.existsById(productId)).thenReturn(false);
@@ -126,6 +131,7 @@ class ProductServiceTest {
 
     @Test
     public void purchaseProduct_success() {
+
         PurchasedProductRequest request1 = new PurchasedProductRequest(1L, 2L);
         PurchasedProductRequest request2 = new PurchasedProductRequest(2L, 3L);
         List<PurchasedProductRequest> requestList = new ArrayList<>();
@@ -153,6 +159,7 @@ class ProductServiceTest {
 
     @Test
     public void testPurchaseProduct_productNotFound() {
+
         PurchasedProductRequest request1 = new PurchasedProductRequest(1L, 2L);
         List<PurchasedProductRequest> requestList = new ArrayList<>();
         requestList.add(request1);
@@ -170,7 +177,8 @@ class ProductServiceTest {
         verify(productRepository, times(1)).findAllById(anyList());
     }
 
-    private ProductRequest createProductRequest(){
+    private ProductRequest createProductRequest() {
+
         ProductRequest request = new ProductRequest();
         request.setName("Test Product");
         request.setPrice(BigDecimal.valueOf(100.0));
@@ -179,7 +187,8 @@ class ProductServiceTest {
         return request;
     }
 
-    private Product createProduct(Long id){
+    private Product createProduct(Long id) {
+
         Product product = new Product();
         product.setId(id);
         product.setName("Test Product");
